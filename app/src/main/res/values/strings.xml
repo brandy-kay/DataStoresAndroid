@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DataStoresAndroid</string>
+    <string name="choose_color">Please Choose a Preferred theme</string>
+    <string name="device_settings">If you choose device settings,the app will use the system settings</string>
 </resources>
