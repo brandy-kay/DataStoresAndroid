@@ -11,32 +11,51 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.brandyodhiambo.datastoresandroid.data.local.ThemePreference
 import com.brandyodhiambo.datastoresandroid.ui.theme.DataStoresAndroidTheme
+import com.brandyodhiambo.datastoresandroid.ui.theme.Theme
+import com.brandyodhiambo.datastoresandroid.ui.viewmodel.ThemeViewModel
+import com.brandyodhiambo.datastoresandroid.utils.dataStore
+import kotlinx.coroutines.Dispatchers
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val themePreference = ThemePreference(dataStore = dataStore)
+        val viewModel = ThemeViewModel(themePreference = themePreference)
+
         setContent {
-            DataStoresAndroidTheme {
+            val theme = viewModel.themeFlow.collectAsState(
+                initial = Theme.FOLLOW_SYSTEM.themeValue,
+                context = Dispatchers.Main.immediate
+            ).value
+            DataStoresAndroidTheme(
+                theme = theme
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colorScheme.background
                 ) {
-                    AppThemeComponent()
+                    AppThemeComponent(viewModel = viewModel)
                 }
             }
         }
@@ -44,7 +63,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppThemeComponent() {
+fun AppThemeComponent(viewModel: ThemeViewModel) {
     Column(
         modifier = Modifier.fillMaxSize().padding(8.dp),
         verticalArrangement = Arrangement.Center,
@@ -52,10 +71,10 @@ fun AppThemeComponent() {
     ) {
         Text(
             text = stringResource(R.string.choose_color),
-            fontSize = MaterialTheme.typography.h5.fontSize,
-            fontWeight = MaterialTheme.typography.h5.fontWeight,
-            fontFamily = MaterialTheme.typography.h5.fontFamily,
-            color = MaterialTheme.colors.onBackground
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.Monospace,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         val radioOptions = listOf<String>("Device settings", "Light Mode", "Dark Mode")
@@ -66,7 +85,20 @@ fun AppThemeComponent() {
                 Row(
                     modifier = Modifier.fillMaxWidth().selectable(
                         selected = (text == selectedOption),
-                        onClick = { onOptionSelected(text) }
+                        onClick = {
+                            onOptionSelected(text)
+                            when (text) {
+                                "Light Mode" -> {
+                                    viewModel.setTheme(Theme.LIGHT_THEME.themeValue)
+                                }
+                                "Dark Mode" -> {
+                                    viewModel.setTheme(Theme.DARK_THEME.themeValue)
+                                }
+                                else -> {
+                                    viewModel.setTheme(Theme.FOLLOW_SYSTEM.themeValue)
+                                }
+                            }
+                        }
                     )
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -78,6 +110,17 @@ fun AppThemeComponent() {
                         modifier = Modifier.padding(all = Dp(value = 8F)),
                         onClick = {
                             onOptionSelected(text)
+                            when (text) {
+                                "Light Mode" -> {
+                                    viewModel.setTheme(Theme.LIGHT_THEME.themeValue)
+                                }
+                                "Dark Mode" -> {
+                                    viewModel.setTheme(Theme.DARK_THEME.themeValue)
+                                }
+                                else -> {
+                                    viewModel.setTheme(Theme.FOLLOW_SYSTEM.themeValue)
+                                }
+                            }
                             Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
                         }
                     )
@@ -86,17 +129,16 @@ fun AppThemeComponent() {
                         text = text,
                         modifier = Modifier.padding(start = 16.dp)
                     )
-//
                 }
             }
         }
 
         Text(
             text = stringResource(R.string.device_settings),
-            fontSize = MaterialTheme.typography.h5.fontSize,
-            fontWeight = MaterialTheme.typography.h5.fontWeight,
-            fontFamily = MaterialTheme.typography.h5.fontFamily,
-            color = MaterialTheme.colors.onBackground
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.Monospace,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
