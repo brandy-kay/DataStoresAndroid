@@ -87,7 +87,7 @@ onSurface = Color.Black,
 
 @Composable
 fun DataStoresAndroidTheme(
-    theme: Any = Theme.MATERIAL_YOU.themeValue,
+    theme: Int = Theme.MATERIAL_YOU.themeValue,
     content: @Composable () -> Unit
 ) {
     val autoColors = if (isSystemInDarkTheme()) DarkColors else LightColors

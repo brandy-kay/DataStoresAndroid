@@ -8,7 +8,7 @@ option java_multiple_files = true;
 
 message ThemePreferences {
 
-    string theme = 1;
+    int32 theme = 1;
 
 
 
