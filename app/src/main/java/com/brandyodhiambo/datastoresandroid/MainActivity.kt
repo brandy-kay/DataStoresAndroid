@@ -28,19 +28,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.brandyodhiambo.datastoresandroid.data.local.ThemePreference
+import com.brandyodhiambo.datastoresandroid.data.local.ThemeRepository
 import com.brandyodhiambo.datastoresandroid.ui.theme.DataStoresAndroidTheme
 import com.brandyodhiambo.datastoresandroid.ui.theme.Theme
 import com.brandyodhiambo.datastoresandroid.ui.viewmodel.ThemeViewModel
-import com.brandyodhiambo.datastoresandroid.utils.dataStore
+import com.brandyodhiambo.datastoresandroid.utils.themePreferencesStore
 import kotlinx.coroutines.Dispatchers
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val themePreference = ThemePreference(dataStore = dataStore)
-        val viewModel = ThemeViewModel(themePreference = themePreference)
+        val themeRepository = ThemeRepository(themePreferencesDataStore = themePreferencesStore)
+        val viewModel = ThemeViewModel(themeRepository = themeRepository)
 
         setContent {
             val theme = viewModel.themeFlow.collectAsState(
@@ -77,7 +77,7 @@ fun AppThemeComponent(viewModel: ThemeViewModel) {
             color = MaterialTheme.colorScheme.onBackground
         )
 
-        val radioOptions = listOf<String>("Device settings", "Light Mode", "Dark Mode")
+        val radioOptions = listOf("Device settings", "Light Mode", "Dark Mode")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

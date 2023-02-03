@@ -87,7 +87,7 @@ onSurface = Color.Black,
 
 @Composable
 fun DataStoresAndroidTheme(
-    theme: Int = Theme.MATERIAL_YOU.themeValue,
+    theme: Any = Theme.MATERIAL_YOU.themeValue,
     content: @Composable () -> Unit
 ) {
     val autoColors = if (isSystemInDarkTheme()) DarkColors else LightColors
@@ -109,14 +109,6 @@ fun DataStoresAndroidTheme(
         Theme.MATERIAL_YOU.themeValue -> dynamicColors
         else -> autoColors
     }
-
-    /* val systemUiController = rememberSystemUiController()
-
-     SideEffect {
-         systemUiController.setSystemBarsColor(
-             color = colors.background
-         )
-     }*/
 
     MaterialTheme(
         colorScheme = colors,
